@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 
 import org.alicebot.ab.Bot;
 import org.alicebot.ab.Chat;
+import org.alicebot.ab.MagicBooleans;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,8 +22,10 @@ public class BotService {
 
 	public String getBotMessage(String humanMessage) {
 		try {
+			MagicBooleans.trace_mode = false;
 			System.out.println("String human MEssage=" + humanMessage);
 			Chat chat = threadLocalChat.get();
+			System.out.println("TOPIC=" + chat.predicates.get("topic"));
 			String botResponse = chat.multisentenceRespond(humanMessage);
 			System.out.println("Bot Response=" + botResponse);
 			return botResponse;
