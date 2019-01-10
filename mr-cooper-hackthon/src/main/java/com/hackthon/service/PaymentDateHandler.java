@@ -72,13 +72,10 @@ public class PaymentDateHandler {
 		readyToChangeHandler(contextKey, context, conversation);
 		findDateInConversationHandler(contextKey, context, conversation);
 		confirmDueDateHandler(contextKey, context, conversation);
-<<<<<<< Updated upstream
-		return TemplateUtil.bindTemplate(context, context.getConversationStatus());
-=======
 		confirmCallBackDateHandler(contextKey, context, conversation);
 		negativeConversationCheck(contextKey, context, conversation);
-		return context.getConversationStatus().getTemplate();
->>>>>>> Stashed changes
+		return TemplateUtil.bindTemplate(context, context.getConversationStatus());
+
 	}
 
 	private void negativeConversationCheck(String contextKey, ConversationContext context, Conversation conversation) {
