@@ -16,6 +16,8 @@ public class Conversation {
 
   private ConversationStatus endStatus;
 
+  private ConersationType type;
+
   private List<Long> responseId;
 
   public Long getId() {
@@ -75,6 +77,18 @@ public class Conversation {
     this.endStatus = endStatus;
   }
 
+  public ConersationType getType() {
+    return type;
+  }
+
+  public void setType(ConersationType type) {
+    this.type = type;
+  }
+
+  public void setSentimentalPolarityScore(Double sentimentalPolarityScore) {
+    this.sentimentalPolarityScore = sentimentalPolarityScore;
+  }
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
@@ -90,6 +104,8 @@ public class Conversation {
     builder.append(reponded);
     builder.append(", endStatus=");
     builder.append(endStatus);
+    builder.append(", type=");
+    builder.append(type);
     builder.append(", responseId=");
     builder.append(responseId);
     builder.append("]");
