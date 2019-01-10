@@ -21,7 +21,7 @@ public class BotService {
 
 	@PostConstruct
 	public void init() {
-		threadLocalBot = ThreadLocal.withInitial(() -> new Bot("super", getFilePath()));
+		threadLocalBot = ThreadLocal.withInitial(() -> new Bot("super", botPath));
 		threadLocalChat = ThreadLocal.withInitial(() -> {
 			Bot bot = threadLocalBot.get();
 			bot.brain.nodeStats();
