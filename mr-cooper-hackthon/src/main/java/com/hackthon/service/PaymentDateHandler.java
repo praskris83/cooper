@@ -33,6 +33,7 @@ public class PaymentDateHandler {
 
 	@Autowired
 	private SentimentAnalyser sentimentAnalyser;
+	
 	@Autowired
 	private NLPDateParser nlpDateParser;
 
@@ -59,74 +60,63 @@ public class PaymentDateHandler {
 		// NO
 		// -- ?
 		ConversationContext context = ApplicationContextHolder.get(contextKey);
-		if (context == null) {
-			initConverstationHandleing(contextKey, context);
+		Conversation conversation = new Conversation();
+		conversation.setMessage(msg);
+		conversation.setType(ConersationType.USER);
+		if (context == null) {			
+			initConverstationHandleing(contextKey, conversation, context);
 		}
-		readyToChangeHandler(contextKey, context, msg);
-		findDateInConversationHandler(contextKey, context, msg);
-		confirmDueDateHandler(contextKey, context, msg);
-		return CommonUtils.getTemplate(templateKey);
+		updateAndCheckNegativeCountFail(context, conversation);
+		readyToChangeHandler(contextKey, context, conversation);
+		findDateInConversationHandler(contextKey, context, conversation);
+		confirmDueDateHandler(contextKey, context, conversation);
+		return context.getConversationStatus().getTemplate();
 	}
 
-	private void confirmDueDateHandler(String contextKey, ConversationContext context, String msg) {
+	private void confirmDueDateHandler(String contextKey, ConversationContext context, Conversation conversation) {
 		if (context.getConversationStatus() == ConversationStatus.CONFIRM_CHANGE) {
-			if (confirmMsgParser(msg)) {
-				updateConversationStatus(context, ConversationStatus.CHANGE_COMPLETED);
+			if (CommonUtils.confirmMsgParser(conversation.getMessage())) {
+				updateConversationStatus(context, conversation, ConversationStatus.CHANGE_COMPLETED);
 			}
 		}
 
 	}
 
-	private boolean confirmMsgParser(String msg) {
-		if (msg.contains("yes") || msg.contains("mm") || msg.contains("ok")) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private void findDateInConversationHandler(String contextKey, ConversationContext context, String msg) {
+	private void findDateInConversationHandler(String contextKey, ConversationContext context, Conversation conversation) {
+		String msg = conversation.getMessage();
 		if (context.getConversationStatus() == ConversationStatus.READY_TO_CHANGE
 				|| ConversationStatus.DUE_DATE_ERROR == context.getConversationStatus()) {
 			List<LocalDate> dateList = nlpDateParser.getDates(msg);
 			LocalDate validDate = CommonUtils.getNewPaymentDate(LocalDate.now(), dateList);
 			if (validDate == null) {
-				updateConversationStatus(context, ConversationStatus.DUE_DATE_ERROR);
+				updateConversationStatus(context, conversation, ConversationStatus.DUE_DATE_ERROR);
 			} else {
 				context.getLoanRecord().setPostPondedDueDate(validDate.toString().replaceAll("-", "/"));
-				updateConversationStatus(context, ConversationStatus.CONFIRM_CHANGE);
+				updateConversationStatus(context, conversation, ConversationStatus.CONFIRM_CHANGE);
 			}
 		}
 
 	}
-
-	private ConversationContext readyToChangeHandler(String contextKey, ConversationContext context, String msg) {
-		if (context.getConversationStatus() == ConversationStatus.INIT && findReadyToChangeStringPattern(msg)) {
-			updateConversationStatus(context, ConversationStatus.READY_TO_CHANGE);
+	
+	private ConversationContext readyToChangeHandler(String contextKey, ConversationContext context, Conversation conversation) {
+		if (context.getConversationStatus() == ConversationStatus.INIT && CommonUtils.findReadyToChangeStringPattern(conversation.getMessage())) {
+			updateConversationStatus(context, conversation, ConversationStatus.READY_TO_CHANGE);
 		}
 		return context;
 
 	}
 
-	private boolean findReadyToChangeStringPattern(String msg) {
-		if (msg.contains("need to change paymentdate") || msg.contains("need to change date")
-				|| msg.contains("change date")) {
-			return true;
-		}
-		return false;
-
-	}
-
 	private ConversationContext initConverstationHandleing(String contextKey,
-			ConversationContext converssationContext) {
+			Conversation conversation, ConversationContext converssationContext) {
 		converssationContext = createConversationContext(contextKey);
 		ApplicationContextHolder.put(contextKey, converssationContext);
-		updateConversationStatus(converssationContext, ConversationStatus.INIT);
+		updateConversationStatus(converssationContext, conversation, ConversationStatus.INIT);
 		return converssationContext;
 	}
 
 	private void updateConversationStatus(ConversationContext converssationContext,
-			ConversationStatus conversationStatus) {
+			Conversation conversation, ConversationStatus conversationStatus) {
+		conversation.setEndStatus(conversationStatus);
 		converssationContext.setConversationStatus(conversationStatus);
 
 	}
@@ -134,7 +124,7 @@ public class PaymentDateHandler {
 	private ConversationContext createConversationContext(String contextKey) {
 		ConversationContext conversationContext = new ConversationContext();
 		conversationContext.setLoanRecord(getLoanRecord());
-		return null;
+		return conversationContext;
 	}
 
 	private LoanRecord getLoanRecord() {
@@ -165,52 +155,5 @@ public class PaymentDateHandler {
 			context.setNegativeScore(context.getNegativeScore() > 0 ? context.getNegativeScore() - 1 : 0);
 		}
 	}
-
-	// Check if To Date is Present -- If READY_TO_CHANGE || DATE_ERROR - Confirm New
-	// date -- CONFIRM_CHANGE
-	// Check if To Date Valid -- IF TO Data present NO -- Provide a Valid Date --
-	// DATE_ERROR
-
-	public void readyToChange(ConversationContext context, Conversation conversation) {
-		LocalDate date = CommonUtils.getDate(conversation.getMessage());
-		if (null != date) {
-			conversation.setEndStatus(ConversationStatus.CONFIRM_CHANGE);
-		} else {
-			conversation.setEndStatus(ConversationStatus.DUE_DATE_ERROR);
-		}
-		context.setConversationStatus(conversation.getEndStatus());
-	}
-
-	public void dueDateError(ConversationContext context, Conversation conversation) {
-		LocalDate date = CommonUtils.getDate(conversation.getMessage());
-		if (null != date) {
-			conversation.setEndStatus(ConversationStatus.CONFIRM_CHANGE);
-		} else {
-			conversation.setEndStatus(ConversationStatus.DUE_DATE_ERROR);
-		}
-		context.setConversationStatus(conversation.getEndStatus());
-	}
-
-	public void callbackDateError(ConversationContext context, Conversation conversation) {
-		LocalDate date = CommonUtils.getDate(conversation.getMessage());
-		if (null != date) {
-			conversation.setEndStatus(ConversationStatus.CALLBACK_SHEDULED);
-		} else {
-			conversation.setEndStatus(ConversationStatus.CALLBACK_DATE_ERROR);
-		}
-		context.setConversationStatus(conversation.getEndStatus());
-	}
-
-	public void callbackRequested(ConversationContext context, Conversation conversation) {
-		LocalDate date = CommonUtils.getDate(conversation.getMessage());
-		if (null != date) {
-			conversation.setEndStatus(ConversationStatus.CALLBACK_SHEDULED);
-		} else {
-			conversation.setEndStatus(ConversationStatus.CALLBACK_DATE_ERROR);
-		}
-		context.setConversationStatus(conversation.getEndStatus());
-	}
-
-	
 
 }

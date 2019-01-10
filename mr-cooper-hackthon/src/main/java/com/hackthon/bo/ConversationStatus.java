@@ -18,7 +18,6 @@ public enum ConversationStatus {
   private ConversationStatus(String template) {
     this.template = template;
   }
-
   public String getTemplate() {
     return template;
   }
