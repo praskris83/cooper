@@ -75,19 +75,11 @@ public class PaymentDateHandler {
 
 	private void confirmDueDateHandler(String contextKey, ConversationContext context, Conversation conversation) {
 		if (context.getConversationStatus() == ConversationStatus.CONFIRM_CHANGE) {
-			if (confirmMsgParser(conversation.getMessage())) {
+			if (CommonUtils.confirmMsgParser(conversation.getMessage())) {
 				updateConversationStatus(context, conversation, ConversationStatus.CHANGE_COMPLETED);
 			}
 		}
 
-	}
-
-	private boolean confirmMsgParser(String msg) {
-		if (msg.contains("yes") || msg.contains("mm") || msg.contains("ok")) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	private void findDateInConversationHandler(String contextKey, ConversationContext context, Conversation conversation) {
@@ -107,19 +99,10 @@ public class PaymentDateHandler {
 	}
 	
 	private ConversationContext readyToChangeHandler(String contextKey, ConversationContext context, Conversation conversation) {
-		if (context.getConversationStatus() == ConversationStatus.INIT && findReadyToChangeStringPattern(conversation.getMessage())) {
+		if (context.getConversationStatus() == ConversationStatus.INIT && CommonUtils.findReadyToChangeStringPattern(conversation.getMessage())) {
 			updateConversationStatus(context, conversation, ConversationStatus.READY_TO_CHANGE);
 		}
 		return context;
-
-	}
-
-	private boolean findReadyToChangeStringPattern(String msg) {
-		if (msg.contains("need to change paymentdate") || msg.contains("need to change date")
-				|| msg.contains("change date")||msg.contains("need")||msg.contains("change")) {
-			return true;
-		}
-		return false;
 
 	}
 
