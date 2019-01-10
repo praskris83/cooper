@@ -53,4 +53,14 @@ public class CommonUtils {
     }
     return props.getProperty(key);
   }
+
+  public static LocalDate getDate(String message) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+public static boolean isAccept(String message) {
+	// TODO Auto-generated method stub
+	return false;
+}
 }
