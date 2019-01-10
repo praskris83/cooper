@@ -65,7 +65,8 @@ public class PaymentDateHandler {
 		conversation.setMessage(msg);
 		conversation.setType(ConersationType.USER);
 
-		if (context == null || "reset".equals(msg)) {			
+		if (context == null || "reset".equals(msg)) {		
+			System.out.println("Handleing INIT");
 			context=initConverstationHandleing(contextKey, conversation, context);
 		}
 		updateNegativeConversationCount(context, conversation);
@@ -93,6 +94,7 @@ public class PaymentDateHandler {
 	private void confirmDueDateHandler(String contextKey, ConversationContext context, Conversation conversation) {
 		if (context.getConversationStatus() == ConversationStatus.CONFIRM_CHANGE) {
 			if (CommonUtils.confirmMsgParser(conversation.getMessage())) {
+				System.out.println("Confirm Due Handler");
 				updateConversationStatus(context, conversation, ConversationStatus.CHANGE_COMPLETED);
 			}
 		}
@@ -117,8 +119,10 @@ public class PaymentDateHandler {
 		String msg = conversation.getMessage();
 		if (context.getConversationStatus() == ConversationStatus.READY_TO_CHANGE
 				|| ConversationStatus.DUE_DATE_ERROR == context.getConversationStatus()) {
+			System.out.println("Find Date Hanlder");
 			List<LocalDate> dateList = nlpDateParser.getDates(msg);
 			LocalDate validDate = CommonUtils.getNewPaymentDate(LocalDate.now(), dateList);
+			System.out.println("Valid date="+validDate);
 			if (validDate == null) {
 				updateConversationStatus(context, conversation, ConversationStatus.DUE_DATE_ERROR);
 			} else {
@@ -132,6 +136,7 @@ public class PaymentDateHandler {
 	private ConversationContext readyToChangeHandler(String contextKey, ConversationContext context, Conversation conversation) {
 		if (context.getConversationStatus() == ConversationStatus.INIT && CommonUtils.findReadyToChangeStringPattern(conversation.getMessage())) {
 			updateConversationStatus(context, conversation, ConversationStatus.READY_TO_CHANGE);
+			System.out.println("Handleing readyToChangeHandler");
 		}
 		return context;
 
@@ -173,6 +178,7 @@ public class PaymentDateHandler {
 		try {
 			sentimentAnalyser.updateSentimentInfo(conversation);
 			updateNegativeScore(context, conversation);
+			System.out.println("Handleing updateAndCheckNegativeCountFail");
 		} catch (TextAPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
