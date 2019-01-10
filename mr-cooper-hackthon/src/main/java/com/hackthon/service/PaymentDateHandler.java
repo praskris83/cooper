@@ -73,8 +73,10 @@ public class PaymentDateHandler {
     }
     ConversationStatus oldStatus = context.getConversationStatus();
     updateNegativeConversationCount(context, conversation);
-    readyToChangeHandler(contextKey, context, conversation);
-    findDateInConversationHandler(contextKey, context, conversation);
+    boolean isSwitched = readyToChangeHandler(contextKey, context, conversation);
+    if(!isSwitched) {
+    	findDateInConversationHandler(contextKey, context, conversation);
+    }
     confirmDueDateHandler(contextKey, context, conversation);
     confirmCallBackDateHandler(contextKey, context, conversation);
     negativeConversationCheck(contextKey, context, conversation);
@@ -82,6 +84,7 @@ public class PaymentDateHandler {
         && context.getConversationStatus().name().equals(oldStatus.name())){
       return bot.getBotMessage(msg);
     }
+    System.out.println("Context : " + context);
     return TemplateUtil.bindTemplate(context, context.getConversationStatus());
 
   }
@@ -143,15 +146,18 @@ public class PaymentDateHandler {
     }
 
   }
+  
+  
 
-  private ConversationContext readyToChangeHandler(String contextKey, ConversationContext context,
+  private boolean readyToChangeHandler(String contextKey, ConversationContext context,
       Conversation conversation) {
     if (context.getConversationStatus() == ConversationStatus.INIT
         && CommonUtils.findReadyToChangeStringPattern(conversation.getMessage())) {
       updateConversationStatus(context, conversation, ConversationStatus.READY_TO_CHANGE);
       System.out.println("Handleing readyToChangeHandler");
+      return true;
     }
-    return context;
+    return false;
 
   }
 
