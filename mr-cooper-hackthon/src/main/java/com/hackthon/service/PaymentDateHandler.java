@@ -22,6 +22,7 @@ import com.hackthon.bo.ConversationStatus;
 import com.hackthon.bo.LoanRecord;
 import com.hackthon.bo.SentimentalPolarity;
 import com.hackthon.util.CommonUtils;
+import com.hackthon.util.TemplateUtil;
 
 /**
  * @author prasad
@@ -64,13 +65,13 @@ public class PaymentDateHandler {
 		conversation.setMessage(msg);
 		conversation.setType(ConersationType.USER);
 		if (context == null) {			
-			initConverstationHandleing(contextKey, conversation, context);
+			context=initConverstationHandleing(contextKey, conversation, context);
 		}
 		updateAndCheckNegativeCountFail(context, conversation);
 		readyToChangeHandler(contextKey, context, conversation);
 		findDateInConversationHandler(contextKey, context, conversation);
 		confirmDueDateHandler(contextKey, context, conversation);
-		return context.getConversationStatus().getTemplate();
+		return TemplateUtil.bindTemplate(context, context.getConversationStatus());
 	}
 
 	private void confirmDueDateHandler(String contextKey, ConversationContext context, Conversation conversation) {
