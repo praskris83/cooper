@@ -33,6 +33,8 @@ public class PaymentDateHandler {
 
 	@Autowired
 	private SentimentAnalyser sentimentAnalyser;
+	@Autowired
+	private NLPDateParser nlpDateParser;
 
 	public String process(String contextKey, String msg) throws IOException {
 		msg = msg.toLowerCase();
@@ -61,12 +63,34 @@ public class PaymentDateHandler {
 			initConverstationHandleing(contextKey, context);
 		}
 		readyToChangeHandler(contextKey, context, msg);
+		findDateInConversationHandler(contextKey, context, msg);
+		confirmDueDateHandler(contextKey, context, msg);
 
 		return CommonUtils.getTemplate(templateKey);
 	}
 
+	private void confirmDueDateHandler(String contextKey, ConversationContext context, String msg) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void findDateInConversationHandler(String contextKey, ConversationContext context, String msg) {
+		if (context.getConversationStatus() == ConversationStatus.READY_TO_CHANGE
+				|| ConversationStatus.DUE_DATE_ERROR == context.getConversationStatus()) {
+			List<LocalDate> dateList = nlpDateParser.getDates(msg);
+			LocalDate validDate = CommonUtils.getNewPaymentDate(LocalDate.now(), dateList);
+			if (validDate == null) {
+				updateConversationStatus(context, ConversationStatus.DUE_DATE_ERROR);
+			} else {
+				context.getLoanRecord().setPostPondedDueDate(validDate.toString().replaceAll("-", "/"));
+				updateConversationStatus(context, ConversationStatus.CONFIRM_CHANGE);
+			}
+		}
+
+	}
+
 	private ConversationContext readyToChangeHandler(String contextKey, ConversationContext context, String msg) {
-		if (findReadyToChangeStringPattern(msg)) {
+		if (context.getConversationStatus() == ConversationStatus.INIT && findReadyToChangeStringPattern(msg)) {
 			updateConversationStatus(context, ConversationStatus.READY_TO_CHANGE);
 		}
 		return context;
