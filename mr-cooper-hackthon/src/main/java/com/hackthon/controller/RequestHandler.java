@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hackthon.bo.Pair;
 import com.hackthon.service.BotService;
+import com.hackthon.service.PaymentDateHandler;
 import com.hackthon.service.RequestExtractor;
 
 @RestController
 public class RequestHandler {
 	@Autowired
 	private BotService botService;
+	@Autowired
+	private PaymentDateHandler paymentDateHandler;
 
 	@GetMapping(value = "/ping", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String ping() {
@@ -39,6 +42,7 @@ public class RequestHandler {
 		System.out.println("PHone Number=" + pair.getLeft());
 		System.out.println("Customer Message=" + pair.getRight());
 		/* System.out.println(chat.multisentenceRespond(pair.getRight())); */
-		return botService.getBotMessage(pair.getRight());
+		//return botService.getBotMessage(pair.getRight());
+		return paymentDateHandler.process(pair.getLeft(), pair.getRight());
 	}
 }

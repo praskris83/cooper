@@ -70,7 +70,7 @@ public class PaymentDateHandler {
 		readyToChangeHandler(contextKey, context, conversation);
 		findDateInConversationHandler(contextKey, context, conversation);
 		confirmDueDateHandler(contextKey, context, conversation);
-		return CommonUtils.getTemplate(templateKey);
+		return context.getConversationStatus().getTemplate();
 	}
 
 	private void confirmDueDateHandler(String contextKey, ConversationContext context, Conversation conversation) {
@@ -116,7 +116,7 @@ public class PaymentDateHandler {
 
 	private boolean findReadyToChangeStringPattern(String msg) {
 		if (msg.contains("need to change paymentdate") || msg.contains("need to change date")
-				|| msg.contains("change date")) {
+				|| msg.contains("change date")||msg.contains("need")||msg.contains("change")) {
 			return true;
 		}
 		return false;
