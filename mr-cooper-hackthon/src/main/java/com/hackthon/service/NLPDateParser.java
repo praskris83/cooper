@@ -36,6 +36,7 @@ public class NLPDateParser {
     List<DateGroup> groups = threadLocalParser.get().parse(input);
     for(DateGroup group:groups) {
       List<Date> dts = group.getDates();
+      System.out.println("Valid Dates --- " + dts);
       List<LocalDate> lDts= dts.stream().map(dt -> 
         dt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).collect(Collectors.toList());
       dates.addAll(lDts);
