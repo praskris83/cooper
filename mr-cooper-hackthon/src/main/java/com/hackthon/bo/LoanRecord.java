@@ -1,5 +1,7 @@
 package com.hackthon.bo;
 
+import java.time.LocalDate;
+
 public class LoanRecord {
 
 	private String loanAmount;
@@ -7,6 +9,7 @@ public class LoanRecord {
 	private String loanId;
 	private String date;
 	private String postPondedDueDate;
+	private LocalDate payDate;
 
 	public String getPostPondedDueDate() {
 		return postPondedDueDate;
@@ -47,8 +50,18 @@ public class LoanRecord {
 	public void setDate(String date) {
 		this.date = date;
 	}
+	
+	
 
-	@Override
+	public LocalDate getPayDate() {
+    return payDate;
+  }
+
+  public void setPayDate(LocalDate payDate) {
+    this.payDate = payDate;
+  }
+
+  @Override
 	public String toString() {
 		return "LoanDetails [loanAmount=" + loanAmount + ", interestRate=" + interestRate + ", loanId=" + loanId
 				+ ", date=" + date + "]";

@@ -139,7 +139,7 @@ public class PaymentDateHandler {
         || ConversationStatus.DUE_DATE_ERROR == context.getConversationStatus()) {
       System.out.println("Find Date Hanlder");
       List<LocalDate> dateList = nlpDateParser.getDates(msg);
-      LocalDate validDate = CommonUtils.getNewPaymentDate(LocalDate.now(), dateList);
+      LocalDate validDate = CommonUtils.getNewPaymentDate(context.getLoanRecord().getPayDate(), dateList);
       System.out.println("Valid date=" + validDate);
       if (validDate == null) {
         updateConversationStatus(context, conversation, ConversationStatus.DUE_DATE_ERROR);
@@ -196,8 +196,10 @@ public class PaymentDateHandler {
     loanRecord.setLoanId(loanId);
     int loanAmount = RandomUtils.nextInt(1000, 10000);
     loanRecord.setLoanAmount(loanAmount + "");
+    LocalDate plusDays = LocalDate.now().plusDays(15);
+    loanRecord.setPayDate(plusDays);
     loanRecord
-        .setDate(LocalDate.now().plusDays(15).format(format));
+        .setDate(plusDays.format(format));
     loanRecord.setInterestRate(RandomUtils.nextInt(59, 179) + ".5");
     return loanRecord;
   }
