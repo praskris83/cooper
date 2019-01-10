@@ -8,6 +8,8 @@ import com.aylien.textapi.TextAPIClient;
 import com.aylien.textapi.TextAPIException;
 import com.aylien.textapi.parameters.SentimentParams;
 import com.aylien.textapi.responses.Sentiment;
+import com.hackthon.bo.Conversation;
+import com.hackthon.bo.SentimentalPolarity;
 
 /**
  * @author vshenbagaraju
@@ -21,10 +23,11 @@ public class SentimentAnalyser {
   private static final String APP_KEY = "1f040b4eb31d2631edf668528137b073";
   private static final String APP_ID = "33be0324";
 
-  public void getSentimentInfo(String message) throws TextAPIException {
-
+  public void updateSentimentInfo(Conversation conversation) throws TextAPIException {
+    String message = conversation.getMessage();
     Sentiment sentiment = getSentiment(message);
-
+    conversation.setSentimentalPolarity(SentimentalPolarity.valueOf(sentiment.getPolarity().toUpperCase()));
+    conversation.setSentimentalPolarityScore(sentiment.getPolarityConfidence());
   }
 
   private Sentiment getSentiment(String message) throws TextAPIException {

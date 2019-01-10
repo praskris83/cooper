@@ -10,7 +10,7 @@ public class ConversationContext {
 	
 	private ConversationStatus conversationStatus;
 	
-	private Float SentimentalPolarityScore;
+	private Double SentimentalPolarityScore;
 	
 	private SentimentalPolarity sentimentalPolarity;
 
@@ -38,11 +38,11 @@ public class ConversationContext {
     this.conversationStatus = conversationStatus;
   }
 
-  public Float getSentimentalPolarityScore() {
+  public Double getSentimentalPolarityScore() {
     return SentimentalPolarityScore;
   }
 
-  public void setSentimentalPolarityScore(Float sentimentalPolarityScore) {
+  public void setSentimentalPolarityScore(Double sentimentalPolarityScore) {
     SentimentalPolarityScore = sentimentalPolarityScore;
   }
 

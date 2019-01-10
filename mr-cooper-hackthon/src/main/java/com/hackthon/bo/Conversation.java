@@ -10,7 +10,7 @@ public class Conversation {
 
   private SentimentalPolarity sentimentalPolarity;
 
-  private Float sentimentalPolarityScore;
+  private Double sentimentalPolarityScore;
 
   private boolean reponded;
 
@@ -42,12 +42,12 @@ public class Conversation {
     this.sentimentalPolarity = sentimentalPolarity;
   }
 
-  public Float getSentimentalPolarityScore() {
+  public Double getSentimentalPolarityScore() {
     return sentimentalPolarityScore;
   }
 
-  public void setSentimentalPolarityScore(Float sentimentalPolarityScore) {
-    this.sentimentalPolarityScore = sentimentalPolarityScore;
+  public void setSentimentalPolarityScore(double score) {
+    this.sentimentalPolarityScore = score;
   }
 
   public boolean isReponded() {
