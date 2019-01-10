@@ -64,7 +64,8 @@ public class PaymentDateHandler {
 		Conversation conversation = new Conversation();
 		conversation.setMessage(msg);
 		conversation.setType(ConersationType.USER);
-		if (context == null) {			
+
+		if (context == null || "reset".equals(msg)) {			
 			context=initConverstationHandleing(contextKey, conversation, context);
 		}
 		updateAndCheckNegativeCountFail(context, conversation);
