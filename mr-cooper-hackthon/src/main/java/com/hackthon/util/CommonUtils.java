@@ -58,4 +58,9 @@ public class CommonUtils {
     // TODO Auto-generated method stub
     return null;
   }
+
+public static boolean isAccept(String message) {
+	// TODO Auto-generated method stub
+	return false;
+}
 }
