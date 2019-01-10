@@ -1,0 +1,8 @@
+package com.hackthon.bo;
+
+public enum ConversationStatus {
+  
+  INIT, READY_TO_CHANGE, CHANGE_CONFIRMED, DATE_ASKED, DATE_COLLECTED,
+  CALLBACK_SHEDULED, EXIT, CHANGE_COMPLETED 
+
+}
