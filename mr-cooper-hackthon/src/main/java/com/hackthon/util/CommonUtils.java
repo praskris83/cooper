@@ -25,6 +25,15 @@ public class CommonUtils {
     return Math.abs(days) <= 5 && newdate.isAfter(LocalDate.now().plusDays(2));
   }
 
+  public static boolean isCallBackDateValid(LocalDate callbackDt) {
+    return callbackDt.isAfter(LocalDate.now());
+  }
+ 
+  public static LocalDate getCallbackDate(List<LocalDate> callBackDates) {
+    return callBackDates.stream().filter(newDate -> isCallBackDateValid(newDate)).findFirst()
+        .orElse(null);
+  }
+  
   public static LocalDate getNewPaymentDate(LocalDate curDate, List<LocalDate> newDates) {
     return newDates.stream().filter(newDate -> isPayDateValid(curDate, newDate)).findFirst()
         .orElse(null);
