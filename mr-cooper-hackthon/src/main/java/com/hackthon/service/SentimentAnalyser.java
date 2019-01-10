@@ -26,8 +26,17 @@ public class SentimentAnalyser {
   public void updateSentimentInfo(Conversation conversation) throws TextAPIException {
     String message = conversation.getMessage();
     Sentiment sentiment = getSentiment(message);
-    conversation.setSentimentalPolarity(SentimentalPolarity.valueOf(sentiment.getPolarity().toUpperCase()));
+    SentimentalPolarity sentimentPolarity = getSentimentPolarity(sentiment);
+    conversation.setSentimentalPolarity(sentimentPolarity);
     conversation.setSentimentalPolarityScore(sentiment.getPolarityConfidence());
+  }
+
+  private SentimentalPolarity getSentimentPolarity(Sentiment sentiment) {
+    SentimentalPolarity polarity = SentimentalPolarity.valueOf(sentiment.getPolarity().toUpperCase());
+    if(sentiment.getPolarityConfidence() > polarity.getConfidenceScoreCutOff()) {
+      return polarity;
+    }
+    return SentimentalPolarity.NEUTRAL;
   }
 
   private Sentiment getSentiment(String message) throws TextAPIException {
