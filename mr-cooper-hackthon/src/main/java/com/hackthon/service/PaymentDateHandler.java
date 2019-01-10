@@ -32,7 +32,6 @@ import com.hackthon.util.TemplateUtil;
 
 @Service
 public class PaymentDateHandler {
-
   DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   
   @Autowired
@@ -75,8 +74,10 @@ public class PaymentDateHandler {
     }
     ConversationStatus oldStatus = context.getConversationStatus();
     updateNegativeConversationCount(context, conversation);
-    readyToChangeHandler(contextKey, context, conversation);
-    findDateInConversationHandler(contextKey, context, conversation);
+    boolean isSwitched = readyToChangeHandler(contextKey, context, conversation);
+    if(!isSwitched) {
+    	findDateInConversationHandler(contextKey, context, conversation);
+    }
     confirmDueDateHandler(contextKey, context, conversation);
     confirmCallBackDateHandler(contextKey, context, conversation);
     negativeConversationCheck(contextKey, context, conversation);
@@ -84,6 +85,7 @@ public class PaymentDateHandler {
         && context.getConversationStatus().name().equals(oldStatus.name())){
       return bot.getBotMessage(msg);
     }
+    System.out.println("Context : " + context);
     return TemplateUtil.bindTemplate(context, context.getConversationStatus());
 
   }
@@ -126,11 +128,14 @@ public class PaymentDateHandler {
     }
 
   }
+  
+  
+  
 
   private void findDateInConversationHandler(String contextKey, ConversationContext context,
       Conversation conversation) {
     String msg = conversation.getMessage();
-    if (context.getConversationStatus() == ConversationStatus.READY_TO_CHANGE
+    if (context.getConversationStatus() == ConversationStatus.DUE_DATE_COLLECTION
         || ConversationStatus.DUE_DATE_ERROR == context.getConversationStatus()) {
       System.out.println("Find Date Hanlder");
       List<LocalDate> dateList = nlpDateParser.getDates(msg);
@@ -145,16 +150,23 @@ public class PaymentDateHandler {
     }
 
   }
+  
+  
 
-  private ConversationContext readyToChangeHandler(String contextKey, ConversationContext context,
+  private boolean readyToChangeHandler(String contextKey, ConversationContext context,
       Conversation conversation) {
     if (context.getConversationStatus() == ConversationStatus.INIT
         && CommonUtils.findReadyToChangeStringPattern(conversation.getMessage())) {
       updateConversationStatus(context, conversation, ConversationStatus.READY_TO_CHANGE);
       System.out.println("Handleing readyToChangeHandler");
+      return true;
+    } else if(context.getConversationStatus() == ConversationStatus.READY_TO_CHANGE
+            && CommonUtils.findReadyToChangeStringPattern(conversation.getMessage())) {
+    	updateConversationStatus(context, conversation, ConversationStatus.DUE_DATE_COLLECTION);
+        System.out.println("Handleing readyToChangeHandler");
+        return true;
     }
-    return context;
-
+    return false;
   }
 
   private ConversationContext initConverstationHandleing(String contextKey,
@@ -209,5 +221,6 @@ public class PaymentDateHandler {
       context.setNegativeScore(context.getNegativeScore() > 0 ? context.getNegativeScore() - 1 : 0);
     }
   }
+
 
 }

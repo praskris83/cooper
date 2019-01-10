@@ -61,7 +61,7 @@ public class CommonUtils {
 
 	public static boolean findReadyToChangeStringPattern(String msg) {
 		if (msg.contains("need to change paymentdate") || msg.contains("need to change date")
-				|| msg.contains("change date")) {
+				|| msg.contains("change date")||msg.contains("change")||msg.contains("date")||msg.contains("yes")||msg.contains("mm")) {
 			return true;
 		}
 		return false;
