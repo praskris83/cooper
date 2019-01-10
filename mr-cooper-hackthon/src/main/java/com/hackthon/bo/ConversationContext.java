@@ -4,15 +4,15 @@ import java.util.List;
 
 public class ConversationContext {
 
-	private LoanRecord loanRecord;
-	
-	private List<Conversation> conversation;
-	
-	private ConversationStatus conversationStatus;
-	
-	private Double SentimentalPolarityScore;
-	
-	private SentimentalPolarity sentimentalPolarity;
+  private LoanRecord loanRecord;
+
+  private List<Conversation> conversation;
+
+  private ConversationStatus conversationStatus;
+
+  private int negativeScore;
+
+  private SentimentalPolarity sentimentalPolarity;
 
   public LoanRecord getLoanRecord() {
     return loanRecord;
@@ -38,12 +38,12 @@ public class ConversationContext {
     this.conversationStatus = conversationStatus;
   }
 
-  public Double getSentimentalPolarityScore() {
-    return SentimentalPolarityScore;
+  public int getNegativeScore() {
+    return negativeScore;
   }
 
-  public void setSentimentalPolarityScore(Double sentimentalPolarityScore) {
-    SentimentalPolarityScore = sentimentalPolarityScore;
+  public void setNegativeScore(int negativeScore) {
+    this.negativeScore = negativeScore;
   }
 
   public SentimentalPolarity getSentimentalPolarity() {
@@ -56,19 +56,9 @@ public class ConversationContext {
 
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("ConversationContext [loanRecord=");
-    builder.append(loanRecord);
-    builder.append(", conversation=");
-    builder.append(conversation);
-    builder.append(", conversationStatus=");
-    builder.append(conversationStatus);
-    builder.append(", SentimentalPolarityScore=");
-    builder.append(SentimentalPolarityScore);
-    builder.append(", sentimentalPolarity=");
-    builder.append(sentimentalPolarity);
-    builder.append("]");
-    return builder.toString();
+    return "ConversationContext [loanRecord=" + loanRecord + ", conversation=" + conversation
+        + ", conversationStatus=" + conversationStatus + ", SentimentalScore=" + negativeScore
+        + ", sentimentalPolarity=" + sentimentalPolarity + "]";
   }
-	
+
 }
