@@ -32,7 +32,8 @@ public class TemplateUtil {
         return status.getTemplate().replace("${last4Num}", context.getLoanRecord().getLoanId()
             .substring(context.getLoanRecord().getLoanId().length() - 4)).replace("${curPaydate}", context.getLoanRecord().getDate());
       case READY_TO_CHANGE:
-        return status.getTemplate().replace("${curPaydate}", context.getLoanRecord().getDate());
+        return status.getTemplate().replace("${last4Num}", context.getLoanRecord().getLoanId()
+            .substring(context.getLoanRecord().getLoanId().length() - 4)).replace("${curPaydate}", context.getLoanRecord().getDate());
       case CONFIRM_CHANGE:
         return status.getTemplate().replace("${newPaydate}", context.getLoanRecord().getPostPondedDueDate());
       case DUE_DATE_ERROR:
