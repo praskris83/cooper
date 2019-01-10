@@ -5,6 +5,7 @@ package com.hackthon.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,8 @@ import com.hackthon.util.TemplateUtil;
 @Service
 public class PaymentDateHandler {
 
+  DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  
   @Autowired
   private SentimentAnalyser sentimentAnalyser;
 
@@ -182,7 +185,7 @@ public class PaymentDateHandler {
     int loanAmount = RandomUtils.nextInt(1000, 10000);
     loanRecord.setLoanAmount(loanAmount + "");
     loanRecord
-        .setDate(RandomUtils.nextInt(1, 28) + "/" + RandomUtils.nextInt(1, 12) + "/" + "2019");
+        .setDate(LocalDate.now().plusDays(15).format(format));
     loanRecord.setInterestRate(RandomUtils.nextInt(59, 179) + ".5");
     return loanRecord;
   }
