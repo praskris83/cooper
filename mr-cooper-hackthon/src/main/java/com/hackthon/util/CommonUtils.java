@@ -68,4 +68,8 @@ public class CommonUtils {
 
 	}
 
+	public static LocalDate getCallBackDate(LocalDate now, List<LocalDate> dateList) {
+		return dateList.stream().filter(newDate -> newDate.isAfter(now)).findFirst().orElse(null);
+		}
+
 }

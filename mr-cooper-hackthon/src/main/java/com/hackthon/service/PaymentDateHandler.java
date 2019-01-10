@@ -68,11 +68,29 @@ public class PaymentDateHandler {
 		if (context == null || "reset".equals(msg)) {			
 			context=initConverstationHandleing(contextKey, conversation, context);
 		}
-		updateAndCheckNegativeCountFail(context, conversation);
+		updateNegativeConversationCount(context, conversation);
 		readyToChangeHandler(contextKey, context, conversation);
 		findDateInConversationHandler(contextKey, context, conversation);
 		confirmDueDateHandler(contextKey, context, conversation);
+<<<<<<< Updated upstream
 		return TemplateUtil.bindTemplate(context, context.getConversationStatus());
+=======
+		confirmCallBackDateHandler(contextKey, context, conversation);
+		negativeConversationCheck(contextKey, context, conversation);
+		return context.getConversationStatus().getTemplate();
+>>>>>>> Stashed changes
+	}
+
+	private void negativeConversationCheck(String contextKey, ConversationContext context, Conversation conversation) {
+		if (context.getNegativeScore() > 3) {
+			if (!ConversationStatus.CALLBACK_REQUESTED.equals(context.getConversationStatus())) {
+				conversation.setEndStatus(ConversationStatus.EXIT);
+				context.setConversationStatus(ConversationStatus.EXIT);
+			} else {
+				conversation.setEndStatus(ConversationStatus.CALLBACK_REQUESTED);
+				context.setConversationStatus(ConversationStatus.CALLBACK_REQUESTED);
+			}
+		}
 	}
 
 	private void confirmDueDateHandler(String contextKey, ConversationContext context, Conversation conversation) {
@@ -80,6 +98,20 @@ public class PaymentDateHandler {
 			if (CommonUtils.confirmMsgParser(conversation.getMessage())) {
 				updateConversationStatus(context, conversation, ConversationStatus.CHANGE_COMPLETED);
 			}
+		}
+	}
+	
+	private void confirmCallBackDateHandler(String contextKey, ConversationContext context, Conversation conversation) {
+		if (context.getConversationStatus() == ConversationStatus.CALLBACK_REQUESTED) {
+			List<LocalDate> dateList = nlpDateParser.getDates(conversation.getMessage());
+			LocalDate validDate = CommonUtils.getCallBackDate(LocalDate.now(), dateList);
+			if (validDate == null) {
+				updateConversationStatus(context, conversation, ConversationStatus.CALLBACK_DATE_ERROR);
+			} else {
+				context.getLoanRecord().setPostPondedDueDate(validDate.toString().replaceAll("-", "/"));
+				updateConversationStatus(context, conversation, ConversationStatus.CALLBACK_SHEDULED);
+			}
+			
 		}
 
 	}
@@ -140,7 +172,7 @@ public class PaymentDateHandler {
 		return loanRecord;
 	}
 
-	public void updateAndCheckNegativeCountFail(ConversationContext context, Conversation conversation) {
+	public void updateNegativeConversationCount(ConversationContext context, Conversation conversation) {
 		try {
 			sentimentAnalyser.updateSentimentInfo(conversation);
 			updateNegativeScore(context, conversation);
