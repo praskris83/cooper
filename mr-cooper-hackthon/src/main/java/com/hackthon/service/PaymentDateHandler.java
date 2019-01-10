@@ -127,11 +127,14 @@ public class PaymentDateHandler {
     }
 
   }
+  
+  
+  
 
   private void findDateInConversationHandler(String contextKey, ConversationContext context,
       Conversation conversation) {
     String msg = conversation.getMessage();
-    if (context.getConversationStatus() == ConversationStatus.READY_TO_CHANGE
+    if (context.getConversationStatus() == ConversationStatus.DUE_DATE_COLLECTION
         || ConversationStatus.DUE_DATE_ERROR == context.getConversationStatus()) {
       System.out.println("Find Date Hanlder");
       List<LocalDate> dateList = nlpDateParser.getDates(msg);
@@ -156,9 +159,13 @@ public class PaymentDateHandler {
       updateConversationStatus(context, conversation, ConversationStatus.READY_TO_CHANGE);
       System.out.println("Handleing readyToChangeHandler");
       return true;
+    } else if(context.getConversationStatus() == ConversationStatus.READY_TO_CHANGE
+            && CommonUtils.findReadyToChangeStringPattern(conversation.getMessage())) {
+    	updateConversationStatus(context, conversation, ConversationStatus.DUE_DATE_COLLECTION);
+        System.out.println("Handleing readyToChangeHandler");
+        return true;
     }
     return false;
-
   }
 
   private ConversationContext initConverstationHandleing(String contextKey,
