@@ -12,8 +12,6 @@ public class ConversationContext {
 
   private int negativeScore;
 
-  private SentimentalPolarity sentimentalPolarity;
-
   public LoanRecord getLoanRecord() {
     return loanRecord;
   }
@@ -46,19 +44,10 @@ public class ConversationContext {
     this.negativeScore = negativeScore;
   }
 
-  public SentimentalPolarity getSentimentalPolarity() {
-    return sentimentalPolarity;
-  }
-
-  public void setSentimentalPolarity(SentimentalPolarity sentimentalPolarity) {
-    this.sentimentalPolarity = sentimentalPolarity;
-  }
-
   @Override
   public String toString() {
     return "ConversationContext [loanRecord=" + loanRecord + ", conversation=" + conversation
-        + ", conversationStatus=" + conversationStatus + ", SentimentalScore=" + negativeScore
-        + ", sentimentalPolarity=" + sentimentalPolarity + "]";
+        + ", conversationStatus=" + conversationStatus + ", negativeScore=" + negativeScore + "]";
   }
 
 }
