@@ -4,6 +4,7 @@
 package com.hackthon.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import com.aylien.textapi.TextAPIException;
 import com.hackthon.bo.ConersationType;
 import com.hackthon.bo.Conversation;
 import com.hackthon.bo.ConversationContext;
+import com.hackthon.bo.ConversationStatus;
 import com.hackthon.bo.SentimentalPolarity;
 import com.hackthon.util.CommonUtils;
 
@@ -68,4 +70,51 @@ public class PaymentDateHandler {
     }
   }
 
+  
+  // Check if To Date is Present -- If READY_TO_CHANGE || DATE_ERROR - Confirm New date --  CONFIRM_CHANGE
+  // Check if To Date Valid -- IF TO Data present NO -- Provide a Valid Date -- DATE_ERROR
+
+  public void readyToChange(ConversationContext context, Conversation conversation) {
+    LocalDate date = CommonUtils.getDate(conversation.getMessage());
+    if(null != date) {
+      conversation.setEndStatus(ConversationStatus.CONFIRM_CHANGE);
+    } else {
+      conversation.setEndStatus(ConversationStatus.DUE_DATE_ERROR);
+    }
+    context.setConversationStatus(conversation.getEndStatus());
+  }
+
+  public void dueDateError(ConversationContext context, Conversation conversation) {
+    LocalDate date = CommonUtils.getDate(conversation.getMessage());
+    if(null != date) {
+      conversation.setEndStatus(ConversationStatus.CONFIRM_CHANGE);
+    } else {
+      conversation.setEndStatus(ConversationStatus.DUE_DATE_ERROR);
+    }
+    context.setConversationStatus(conversation.getEndStatus());
+  }
+  
+  public void callbackDateError(ConversationContext context, Conversation conversation) {
+    LocalDate date = CommonUtils.getDate(conversation.getMessage());
+    if(null != date) {
+      conversation.setEndStatus(ConversationStatus.CALLBACK_SHEDULED);
+    } else {
+      conversation.setEndStatus(ConversationStatus.CALLBACK_DATE_ERROR);
+    }
+    context.setConversationStatus(conversation.getEndStatus());
+  }
+
+  public void callbackRequested(ConversationContext context, Conversation conversation) {
+    LocalDate date = CommonUtils.getDate(conversation.getMessage());
+    if(null != date) {
+      conversation.setEndStatus(ConversationStatus.CALLBACK_SHEDULED);
+    } else {
+      conversation.setEndStatus(ConversationStatus.CALLBACK_DATE_ERROR);
+    }
+    context.setConversationStatus(conversation.getEndStatus());
+  }
+
+  
+
+  
 }
